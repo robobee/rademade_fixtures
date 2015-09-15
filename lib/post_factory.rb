@@ -1,9 +1,9 @@
 require_relative 'post.rb'
 
-class UserFactory
+class PostFactory
 
   def create
-    User.new
+    Post.new
   end
 
 end

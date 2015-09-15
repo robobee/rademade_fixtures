@@ -1,17 +1,17 @@
 require_relative 'active_record'
 
-class User < ActiveRecord
+class Post < ActiveRecord
 
   def attributes
-    [:id, :name, :last_name, :age]
+    [:id, :name, :text]
   end
 
   def table_name
-    'users'
+    'posts'
   end
 
   def self.table_name
-    'users'
+    'posts'
   end
 
 end

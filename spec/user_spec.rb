@@ -1,5 +1,4 @@
 require_relative '../lib/user.rb'
-require 'pry'
 
 describe User do
 
@@ -18,15 +17,21 @@ describe User do
       expect(user).to respond_to(:save)
     end
 
-    it "implements #model_alias" do
-      expect(user).to respond_to(:model_alias)
-      expect { user.model_alias }.not_to raise_error
+    it "implements #table_name" do
+      expect(user).to respond_to(:table_name)
+      expect { user.table_name }.not_to raise_error
     end
 
     it "implements #attributes" do
       expect(user).to respond_to(:attributes)
       expect { user.attributes }.not_to raise_error
     end
+
+    it "implements self.table_name" do
+      expect(user.class).to respond_to(:table_name)
+      expect { user.class.table_name }.not_to raise_error
+    end
+
   end
 
   describe "setting and getting attributes" do
@@ -69,11 +74,20 @@ describe User do
       @user.set(:last_name, 'Doe')
       @user.set(:age, 35)
       expect(@connection).to receive(:exec_params)
-        .with("INSERT INTO user (id, name, last_name, age) VALUES ($1, $2, $3, $4)",
+        .with("INSERT INTO users (id, name, last_name, age) VALUES ($1, $2, $3, $4)",
           [1, "John", "Doe", 35])
       @user.save
     end
 
+  end
+
+  describe "User.find" do
+    it "calls connection #exec_params with correct sql" do
+      expect(Connection.instance).to receive(:exec_params)
+        .with("SELECT * FROM users WHERE id = $1", [1])
+
+      User.find(1)
+    end
   end
 
 end

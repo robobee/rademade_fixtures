@@ -25,16 +25,25 @@ class ActiveRecord
     columns = attributes.map(&:to_s).join(", ")
     values = (1..attributes.count).map { |i| "$#{i}" }.join(", ")
     params = attributes.map { |a| @proxy[a] }
-    sql = "INSERT INTO #{model_alias} (#{columns}) VALUES (#{values})"
+    sql = "INSERT INTO #{table_name} (#{columns}) VALUES (#{values})"
     @connection.exec_params(sql, params)
   end
 
-  def model_alias
+  def table_name
     raise NotImplementedError
   end
 
   def attributes
     raise NotImplementedError
+  end
+
+  def self.table_name
+    raise NotImplementedError
+  end
+
+  def self.find(id)
+    sql = "SELECT * FROM #{table_name} WHERE id = $1"
+    Connection.instance.exec_params(sql, [id])
   end
 
 end

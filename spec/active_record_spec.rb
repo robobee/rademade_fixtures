@@ -8,12 +8,16 @@ describe ActiveRecord do
       @model = ActiveRecord.new
     end
 
-    it "forces subclasses to implement #model_alias" do
-      expect { @model.model_alias }.to raise_error(NotImplementedError)
+    it "forces subclasses to implement #table_name" do
+      expect { @model.table_name }.to raise_error(NotImplementedError)
     end
 
     it "forces subclasses to implement #attributes" do
       expect { @model.attributes }.to raise_error(NotImplementedError)
+    end
+
+    it "forces subclasses to implement self.table_name" do
+      expect { @model.class.table_name }.to raise_error(NotImplementedError)
     end
 
   end
