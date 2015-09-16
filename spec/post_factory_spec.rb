@@ -1,5 +1,3 @@
-require_relative '../lib/post_factory'
-
 describe PostFactory do
 
   describe "implements AbstractFactory interface" do

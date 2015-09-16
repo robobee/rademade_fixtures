@@ -1,5 +1,3 @@
-require_relative '../lib/user.rb'
-
 describe User do
 
   describe "implements ActiveRecord interface" do

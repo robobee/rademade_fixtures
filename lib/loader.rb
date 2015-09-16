@@ -1,6 +1,3 @@
-require_relative '../lib/user_factory'
-require_relative '../lib/post_factory'
-
 class Loader
 
   attr_reader :fixtures_folder
@@ -14,8 +11,8 @@ class Loader
     files.each do |file|
       model_alias = get_model_alias(file)
       factory = choose_factory(model_alias)
-      hash = process_file(file)
-      hash.each do |repr|
+      representations = process_file(file)
+      representations.each do |repr|
         create_fixture(repr, factory)
       end
     end

@@ -1,5 +1,3 @@
-require_relative 'connection.rb'
-
 class ActiveRecord
 
   attr_accessor :persisted

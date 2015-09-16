@@ -1,5 +1,3 @@
-require_relative '../lib/connection.rb'
-
 describe Connection do
 
   it "has a singleton object instance" do

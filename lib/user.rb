@@ -1,5 +1,3 @@
-require_relative 'active_record'
-
 class User < ActiveRecord
 
   def self.table_name

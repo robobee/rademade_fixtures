@@ -1,5 +1,3 @@
-require_relative '../lib/json_loader.rb'
-
 describe JsonLoader do
 
   let(:loader) { JsonLoader.new(Dir.pwd << "/fixtures") }
@@ -35,4 +33,3 @@ describe JsonLoader do
   end
 
 end
-

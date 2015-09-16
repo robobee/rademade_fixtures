@@ -1,6 +1,3 @@
-require_relative 'loader.rb'
-require 'json'
-
 class JsonLoader < Loader
 
   private

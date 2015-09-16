@@ -1,5 +1,3 @@
-require_relative '../lib/loader.rb'
-
 describe Loader do
 
   let(:loader) { Loader.new('.') }

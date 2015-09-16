@@ -1,5 +1,3 @@
-require_relative '../lib/post.rb'
-
 describe Post do
 
   describe "implements ActiveRecord interface" do

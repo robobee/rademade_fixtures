@@ -1,5 +1,3 @@
-require_relative 'active_record'
-
 class Post < ActiveRecord
 
   def self.attributes

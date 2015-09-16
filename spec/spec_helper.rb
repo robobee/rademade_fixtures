@@ -17,7 +17,14 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
-require_relative '../lib/connection.rb'
+require 'json'
+require 'pg'
+require 'connection'
+require_relative '../lib/active_record'
+
+Dir[File.join(File.expand_path("../../lib", __FILE__), "*.rb")].each do |f|
+  require f
+end
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate

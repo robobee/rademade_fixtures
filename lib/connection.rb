@@ -1,5 +1,3 @@
-require 'pg'
-
 class Connection
 
   def initialize(config)

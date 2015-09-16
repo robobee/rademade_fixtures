@@ -1,5 +1,3 @@
-require_relative '../lib/active_record'
-
 describe ActiveRecord do
 
   describe "it is an abstract class" do

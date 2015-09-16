@@ -1,5 +1,3 @@
-require_relative '../lib/user_factory'
-
 describe UserFactory do
 
   describe "implements AbstractFactory interface" do
