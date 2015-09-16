@@ -2,9 +2,16 @@ require_relative 'connection.rb'
 
 class ActiveRecord
 
-  def initialize(connection = Connection.instance)
-    @connection = connection
+  attr_accessor :persisted
+  attr_accessor :attributes
+  attr_accessor :table_name
+
+  def initialize(config = {})
+    @connection = config[:connection] || Connection.instance
+    @attributes = config[:attributes] || self.class.attributes
+    @table_name = config[:table_name] || self.class.table_name
     @proxy = Hash.new
+    @persisted = false
   end
 
   def get(attribute)
@@ -22,19 +29,19 @@ class ActiveRecord
   end
 
   def save
-    columns = attributes.map(&:to_s).join(", ")
-    values = (1..attributes.count).map { |i| "$#{i}" }.join(", ")
-    params = attributes.map { |a| @proxy[a] }
-    sql = "INSERT INTO #{table_name} (#{columns}) VALUES (#{values})"
+    if persisted
+      columns = attributes.map(&:to_s)
+      placeholders = (1..attributes.count).map { |i| "$#{i}" }
+      zipped = columns.zip(placeholders).map { |pair| pair.join(" = ") }.join(", ")
+      params = attributes.map { |a| @proxy[a] }
+      sql = "UPDATE #{table_name} SET #{zipped} WHERE id = #{@proxy[:id]}"
+    else
+      columns = attributes.map(&:to_s).join(", ")
+      placeholders = (1..attributes.count).map { |i| "$#{i}" }.join(", ")
+      params = attributes.map { |a| @proxy[a] }
+      sql = "INSERT INTO #{table_name} (#{columns}) VALUES (#{placeholders})"
+    end
     @connection.exec_params(sql, params)
-  end
-
-  def table_name
-    raise NotImplementedError
-  end
-
-  def attributes
-    raise NotImplementedError
   end
 
   def self.attributes
@@ -51,6 +58,7 @@ class ActiveRecord
     return nil if result.cmd_tuples == 0
 
     object = self.new
+    object.persisted = true
     self.attributes.each do |attribute|
       object.set(attribute, result[0][attribute.to_s])
     end

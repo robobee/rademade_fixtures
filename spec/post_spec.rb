@@ -17,16 +17,6 @@ describe Post do
       expect(post).to respond_to(:save)
     end
 
-    it "implements #table_name" do
-      expect(post).to respond_to(:table_name)
-      expect { post.table_name }.not_to raise_error
-    end
-
-    it "implements #attributes" do
-      expect(post).to respond_to(:attributes)
-      expect { post.attributes }.not_to raise_error
-    end
-
     it "implements self.table_name" do
       expect(post.class).to respond_to(:table_name)
       expect { post.class.table_name }.not_to raise_error
@@ -67,34 +57,50 @@ describe Post do
 
   describe "saving an object" do
 
-    it "calls connection #exec_params with correct sql" do
-      @connection = double("connection")
-      allow(@connection).to receive(:exec_params) { true }
-      @post = Post.new(@connection)
+    context "when not persisted" do
+      it "calls connection #exec_params with correct sql" do
+        @connection = double("connection")
+        allow(@connection).to receive(:exec_params) { true }
+        @post = Post.new(connection: @connection)
 
-      @post.set(:id, 2)
-      @post.set(:name, 'Hello World')
-      @post.set(:text, "What's up everybody?")
+        @post.set(:id, 2)
+        @post.set(:name, 'Hello World')
+        @post.set(:text, "What's up everybody?")
 
-      expect(@connection).to receive(:exec_params)
-        .with("INSERT INTO posts (id, name, text) VALUES ($1, $2, $3)",
-          [2, "Hello World", "What's up everybody?"])
-      @post.save
+        expect(@connection).to receive(:exec_params)
+          .with("INSERT INTO posts (id, name, text) VALUES ($1, $2, $3)",
+            [2, "Hello World", "What's up everybody?"])
+        @post.save
+      end
+
+      it "saves post to database" do
+        @post = Post.new
+        @post.set(:id, 2)
+        @post.set(:name, 'Hello World')
+        @post.set(:text, "What's up everybody?")
+        @post.save
+
+        found = Post.find(2)
+        expect(found.get(:id)).to eq @post.get(:id)
+        expect(found.get(:name)).to eq @post.get(:name)
+        expect(found.get(:text)).to eq @post.get(:text)
+      end
     end
 
-    it "saves post to database" do
-      @post = Post.new
-      @post.set(:id, 2)
-      @post.set(:name, 'Hello World')
-      @post.set(:text, "What's up everybody?")
-      @post.save
+    context "when persisted" do
 
-      found = Post.find(2)
-      expect(found.get(:id)).to eq @post.get(:id)
-      expect(found.get(:name)).to eq @post.get(:name)
-      expect(found.get(:text)).to eq @post.get(:text)
+      before(:each) do
+        Connection.instance.exec_sql("INSERT INTO posts (id, name, text) VALUES (1, 'Hello', 'World')")
+      end
+
+      it "updates user in the database" do
+        post = Post.find(1)
+        post.set(:text, "Ruby")
+        post.save
+        post = Post.find(1)
+        expect(post.get(:text)).to eq("Ruby")
+      end
     end
-
   end
 
   describe "Post.find, finding an object" do

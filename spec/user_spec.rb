@@ -17,16 +17,6 @@ describe User do
       expect(user).to respond_to(:save)
     end
 
-    it "implements #table_name" do
-      expect(user).to respond_to(:table_name)
-      expect { user.table_name }.not_to raise_error
-    end
-
-    it "implements #attributes" do
-      expect(user).to respond_to(:attributes)
-      expect { user.attributes }.not_to raise_error
-    end
-
     it "implements self.table_name" do
       expect(user.class).to respond_to(:table_name)
       expect { user.class.table_name }.not_to raise_error
@@ -66,35 +56,55 @@ describe User do
 
   describe "saving an object" do
 
-    it "calls connection #exec_params with correct sql" do
-      @connection = double("connection")
-      allow(@connection).to receive(:exec_params) { true }
-      @user = User.new(@connection)
+    context "when not persisted" do
 
-      @user.set(:id, 1)
-      @user.set(:name, 'John')
-      @user.set(:last_name, 'Doe')
-      @user.set(:age, 35)
+      it "calls connection #exec_params with correct sql" do
+        @connection = double("connection")
+        allow(@connection).to receive(:exec_params) { true }
+        @user = User.new(connection: @connection)
 
-      expect(@connection).to receive(:exec_params)
-        .with("INSERT INTO users (id, name, last_name, age) VALUES ($1, $2, $3, $4)",
-          [1, "John", "Doe", 35])
-      @user.save
+        @user.set(:id, 1)
+        @user.set(:name, 'John')
+        @user.set(:last_name, 'Doe')
+        @user.set(:age, 35)
+
+        expect(@connection).to receive(:exec_params)
+          .with("INSERT INTO users (id, name, last_name, age) VALUES ($1, $2, $3, $4)",
+            [1, "John", "Doe", 35])
+        @user.save
+      end
+
+      it "saves user to database" do
+        @user = User.new
+        @user.set(:id, 2)
+        @user.set(:name, 'John')
+        @user.set(:last_name, 'Doe')
+        @user.set(:age, 35)
+        @user.save
+
+        found = User.find(2)
+        expect(found.get(:id)).to eq @user.get(:id)
+        expect(found.get(:name)).to eq @user.get(:name)
+        expect(found.get(:last_name)).to eq @user.get(:last_name)
+        expect(found.get(:age)).to eq @user.get(:age)
+      end
+
     end
 
-    it "saves user to database" do
-      @user = User.new
-      @user.set(:id, 2)
-      @user.set(:name, 'John')
-      @user.set(:last_name, 'Doe')
-      @user.set(:age, 35)
-      @user.save
+    context "when persisted" do
 
-      found = User.find(2)
-      expect(found.get(:id)).to eq @user.get(:id)
-      expect(found.get(:name)).to eq @user.get(:name)
-      expect(found.get(:last_name)).to eq @user.get(:last_name)
-      expect(found.get(:age)).to eq @user.get(:age)
+      before(:each) do
+        Connection.instance.exec_sql("INSERT INTO users (id, name, last_name, age) VALUES (1, 'John', 'Doe', 35)")
+      end
+
+      it "updates user in the database" do
+        user = User.find(1)
+        user.set(:name, "Vasiliy")
+        user.save
+        user = User.find(1)
+        expect(user.get(:name)).to eq("Vasiliy")
+      end
+
     end
 
   end
