@@ -40,6 +40,11 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 
+  config.before(:each) do
+    Connection.instance.exec_sql("TRUNCATE TABLE users;")
+    Connection.instance.exec_sql("TRUNCATE TABLE posts;")
+  end
+
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.
 =begin

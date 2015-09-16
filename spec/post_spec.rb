@@ -32,6 +32,11 @@ describe Post do
       expect { post.class.table_name }.not_to raise_error
     end
 
+    it "implements self.attributes" do
+      expect(post.class).to respond_to(:attributes)
+      expect { post.class.attributes }.not_to raise_error
+    end
+
   end
 
   describe "setting and getting attributes" do
@@ -62,31 +67,59 @@ describe Post do
 
   describe "saving an object" do
 
-    before(:each) do
+    it "calls connection #exec_params with correct sql" do
       @connection = double("connection")
       allow(@connection).to receive(:exec_params) { true }
-      @user = Post.new(@connection)
-    end
+      @post = Post.new(@connection)
 
-    it "calls connection #exec_params with correct sql" do
-      @user.set(:id, 2)
-      @user.set(:name, 'Hello World')
-      @user.set(:text, "What's up everybody?")
+      @post.set(:id, 2)
+      @post.set(:name, 'Hello World')
+      @post.set(:text, "What's up everybody?")
+
       expect(@connection).to receive(:exec_params)
         .with("INSERT INTO posts (id, name, text) VALUES ($1, $2, $3)",
           [2, "Hello World", "What's up everybody?"])
-      @user.save
+      @post.save
+    end
+
+    it "saves post to database" do
+      @post = Post.new
+      @post.set(:id, 2)
+      @post.set(:name, 'Hello World')
+      @post.set(:text, "What's up everybody?")
+      @post.save
+
+      found = Post.find(2)
+      expect(found.get(:id)).to eq @post.get(:id)
+      expect(found.get(:name)).to eq @post.get(:name)
+      expect(found.get(:text)).to eq @post.get(:text)
     end
 
   end
 
-  describe "Post.find" do
-    it "calls connection #exec_params with correct sql" do
-      expect(Connection.instance).to receive(:exec_params)
-        .with("SELECT * FROM posts WHERE id = $1", [2])
+  describe "Post.find, finding an object" do
 
-      Post.find(2)
+    context "when object is present in database" do
+      before(:each) do
+        Connection.instance.exec_sql("INSERT INTO posts (id, name, text) VALUES (1, 'Hello', 'World')")
+      end
+
+      it "retrieves object from database" do
+        result = Post.find(1)
+        expect(result).to be_instance_of Post
+        expect(result.get(:id)).to eq(1)
+        expect(result.get(:name)).to eq('Hello')
+        expect(result.get(:text)).to eq('World')
+      end
     end
+
+    context "when there is no such object" do
+      it "returns nil" do
+        result = Post.find(2)
+        expect(result).to be nil
+      end
+    end
+
   end
 
 end

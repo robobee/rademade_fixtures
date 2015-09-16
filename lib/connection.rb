@@ -4,13 +4,18 @@ class Connection
 
   def initialize(config)
     @connection = PG.connect(dbname: config[:dbname])
+    @connection.type_map_for_results = PG::BasicTypeMapForResults.new(@connection)
   end
 
   def exec_params(sql, params)
     @connection.exec_params(sql, params)
   end
 
-  @instance = Connection.new(dbname: 'todo_development')
+  def exec_sql(sql)
+    @connection.exec(sql)
+  end
+
+  @instance = Connection.new(dbname: 'rademade')
 
   def self.instance
     @instance

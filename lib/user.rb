@@ -14,4 +14,8 @@ class User < ActiveRecord
     'users'
   end
 
+  def self.attributes
+    [:id, :name, :last_name, :age]
+  end
+
 end

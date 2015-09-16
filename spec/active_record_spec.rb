@@ -20,6 +20,10 @@ describe ActiveRecord do
       expect { @model.class.table_name }.to raise_error(NotImplementedError)
     end
 
+    it "forces subclasses to implement self.attributes" do
+      expect { @model.class.attributes }.to raise_error(NotImplementedError)
+    end
+
   end
 
 end

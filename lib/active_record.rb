@@ -37,13 +37,24 @@ class ActiveRecord
     raise NotImplementedError
   end
 
+  def self.attributes
+    raise NotImplementedError
+  end
+
   def self.table_name
     raise NotImplementedError
   end
 
   def self.find(id)
     sql = "SELECT * FROM #{table_name} WHERE id = $1"
-    Connection.instance.exec_params(sql, [id])
+    result = Connection.instance.exec_params(sql, [id])
+    return nil if result.cmd_tuples == 0
+
+    object = self.new
+    self.attributes.each do |attribute|
+      object.set(attribute, result[0][attribute.to_s])
+    end
+    object
   end
 
 end
