@@ -32,10 +32,7 @@ module RademadeFixtures
     end
 
     def create_fixture(repr, factory)
-      object = factory.create
-      repr.each do |k, v|
-        object.set(k.to_sym, v)
-      end
+      object = factory.create_from_hash(repr)
       object.save
     end
 
