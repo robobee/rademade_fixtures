@@ -13,11 +13,15 @@ module RademadeFixtures
 
   def self.load_fixtures(config = {})
     unless config[:fixtures_folder]
-      puts 'fixtures_folder is required'
+      puts 'Fixtures_folder is required'
+      return
+    end
+    unless config[:db]
+      puts 'DB config is required'
       return
     end
     fixtures_folder = config[:fixtures_folder]
-    Connection.get_connection(dbname: 'rademade')
+    Connection.get_connection(config[:db])# dbname: 'rademade'
     JsonLoader.new(fixtures_folder).load_fixtures
     IniLoader.new(fixtures_folder).load_fixtures
   end
