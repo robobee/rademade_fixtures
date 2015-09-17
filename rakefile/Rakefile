@@ -1,0 +1,9 @@
+require 'rademade_fixtures'
+
+desc "Load all fixtures from the specified folder"
+task :load_fixtures, [:fixtures_folder] do |t, args|
+  args.with_defaults(:fixtures_folder => "fixtures")
+
+  fixtures_folder = File.expand_path(args[:fixtures_folder], __dir__)
+  RademadeFixtures.load_fixtures(fixtures_folder: fixtures_folder)
+end
