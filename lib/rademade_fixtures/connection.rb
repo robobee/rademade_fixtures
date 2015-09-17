@@ -4,7 +4,13 @@ module RademadeFixtures
   class Connection
 
     def initialize(config)
-      @connection = PG.connect(config)
+      begin
+        @connection = PG.connect(config)
+      rescue PG::ConnectionBad => e
+        puts 'DB Connection Error'
+        puts e.message
+        exit
+      end
       @connection.type_map_for_results = PG::BasicTypeMapForResults.new(@connection)
     end
 

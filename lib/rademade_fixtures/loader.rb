@@ -1,4 +1,7 @@
 module RademadeFixtures
+  class UnknownModelError < StandardError
+  end
+
   class Loader
 
     attr_reader :fixtures_folder
@@ -27,7 +30,7 @@ module RademadeFixtures
       elsif model_alias == 'post'
         factory = PostFactory.new
       else
-        raise ArgumentError
+        raise UnknownModelError
       end
     end
 

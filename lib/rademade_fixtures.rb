@@ -21,7 +21,7 @@ module RademadeFixtures
       return
     end
     fixtures_folder = config[:fixtures_folder]
-    Connection.get_connection(config[:db])# dbname: 'rademade'
+    Connection.get_connection(config[:db])
     JsonLoader.new(fixtures_folder).load_fixtures
     IniLoader.new(fixtures_folder).load_fixtures
   end
