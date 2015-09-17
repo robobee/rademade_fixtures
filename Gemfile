@@ -1,5 +1,4 @@
 source "http://rubygems.org"
 
-gem 'pg'
-gem 'rspec'
-gem 'pry'
+# Specify your gem's dependencies in test_gem.gemspec
+gemspec

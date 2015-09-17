@@ -17,16 +17,9 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
-require 'json'
-require 'pg'
-require_relative '../lib/connection'
-require_relative '../lib/active_record'
+require 'rademade_fixtures'
 
-Dir[File.join(File.expand_path("../../lib", __FILE__), "*.rb")].each do |f|
-  require f
-end
-
-Connection.get_connection(dbname: 'rademade')
+RademadeFixtures::Connection.get_connection(dbname: 'rademade')
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
@@ -53,8 +46,8 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    Connection.instance.exec_sql("TRUNCATE TABLE users;")
-    Connection.instance.exec_sql("TRUNCATE TABLE posts;")
+    RademadeFixtures::Connection.instance.exec_sql("TRUNCATE TABLE users;")
+    RademadeFixtures::Connection.instance.exec_sql("TRUNCATE TABLE posts;")
   end
 
 # The settings below are suggested to provide a good initial experience
