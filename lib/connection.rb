@@ -13,11 +13,14 @@ class Connection
     @connection.exec(sql)
   end
 
-  @instance = Connection.new(dbname: 'rademade')
+  def self.get_connection(config)
+    @instance ||= Connection.new(dbname: config[:dbname])
+    private_class_method :new
+    @instance
+  end
 
   def self.instance
     @instance
   end
 
-  private_class_method :new
 end

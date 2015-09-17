@@ -19,12 +19,14 @@
 
 require 'json'
 require 'pg'
-require 'connection'
+require_relative '../lib/connection'
 require_relative '../lib/active_record'
 
 Dir[File.join(File.expand_path("../../lib", __FILE__), "*.rb")].each do |f|
   require f
 end
+
+Connection.get_connection(dbname: 'rademade')
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
