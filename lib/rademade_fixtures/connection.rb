@@ -22,7 +22,7 @@ module RademadeFixtures
       @connection.exec(sql)
     end
 
-    def self.get_connection(config)
+    def self.connection(config)
       @instance ||= Connection.new(config)
       private_class_method :new
       @instance

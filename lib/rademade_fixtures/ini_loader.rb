@@ -3,7 +3,7 @@ module RademadeFixtures
 
     private
 
-    def get_files
+    def files
       glob = File.join(fixtures_folder, "*.ini")
       Dir[glob]
     end
@@ -13,9 +13,7 @@ module RademadeFixtures
       File.open(file) do |f|
         f.each do |line|
           data = line.chomp.match /\Adata\[(.*)\]\[(.*)\]=\"(.*)\"\Z/
-          model_alias = data[1]
-          attribute = data[2]
-          value = data[3]
+          whole_string, model_alias, attribute, value = data.to_a
           if result[model_alias]
             result[model_alias][attribute] = value
           else

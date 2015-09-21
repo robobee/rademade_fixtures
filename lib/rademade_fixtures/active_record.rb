@@ -28,19 +28,7 @@ module RademadeFixtures
     end
 
     def save
-      if persisted
-        columns = attributes.map(&:to_s)
-        placeholders = (1..attributes.count).map { |i| "$#{i}" }
-        zipped = columns.zip(placeholders).map { |pair| pair.join(" = ") }.join(", ")
-        params = attributes.map { |a| @proxy[a] }
-        sql = "UPDATE #{table_name} SET #{zipped} WHERE id = #{@proxy[:id]}"
-      else
-        columns = attributes.map(&:to_s).join(", ")
-        placeholders = (1..attributes.count).map { |i| "$#{i}" }.join(", ")
-        params = attributes.map { |a| @proxy[a] }
-        sql = "INSERT INTO #{table_name} (#{columns}) VALUES (#{placeholders})"
-      end
-      @connection.exec_params(sql, params)
+      persisted ? update : create
     end
 
     def self.attributes
@@ -62,6 +50,25 @@ module RademadeFixtures
         object.set(attribute, result[0][attribute.to_s])
       end
       object
+    end
+
+    private
+
+    def create
+      columns = attributes.map(&:to_s).join(", ")
+      placeholders = (1..attributes.count).map { |i| "$#{i}" }.join(", ")
+      params = attributes.map { |a| @proxy[a] }
+      sql = "INSERT INTO #{table_name} (#{columns}) VALUES (#{placeholders})"
+      @connection.exec_params(sql, params)
+    end
+
+    def update
+      columns = attributes.map(&:to_s)
+      placeholders = (1..attributes.count).map { |i| "$#{i}" }
+      zipped = columns.zip(placeholders).map { |pair| pair.join(" = ") }.join(", ")
+      params = attributes.map { |a| @proxy[a] }
+      sql = "UPDATE #{table_name} SET #{zipped} WHERE id = #{@proxy[:id]}"
+      @connection.exec_params(sql, params)
     end
 
   end

@@ -19,7 +19,7 @@
 
 require 'rademade_fixtures'
 
-RademadeFixtures::Connection.get_connection(dbname: 'rademade')
+RademadeFixtures::Connection.connection(dbname: 'rademade')
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate

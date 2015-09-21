@@ -11,7 +11,6 @@ module RademadeFixtures
     end
 
     def load_fixtures
-      files = get_files
       files.each do |file|
         model_alias = get_model_alias(file)
         factory = choose_factory(model_alias)
@@ -39,7 +38,7 @@ module RademadeFixtures
       object.save
     end
 
-    def get_files
+    def files
       raise NotImplementedError
     end
 

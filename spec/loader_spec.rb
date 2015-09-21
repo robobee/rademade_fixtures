@@ -4,7 +4,7 @@ module RademadeFixtures
     let(:loader) { Loader.new('.') }
 
     it "forces subclasses to implement #get_files" do
-      expect { loader.send(:get_files) }.to raise_error(NotImplementedError)
+      expect { loader.send(:files) }.to raise_error(NotImplementedError)
     end
 
     it "forces subclasses to implement #process_file" do

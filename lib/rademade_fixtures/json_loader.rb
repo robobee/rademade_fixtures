@@ -5,7 +5,7 @@ module RademadeFixtures
 
     private
 
-    def get_files
+    def files
       glob = File.join(fixtures_folder, "*.json")
       Dir[glob]
     end
